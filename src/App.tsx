@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Avatar, Button, Form, Input, message, Modal, Table, Timeline, Upload } from 'antd';
 import { LikeOutlined, UploadOutlined } from '@ant-design/icons';
 import useSWR from 'swr';
@@ -108,33 +108,30 @@ const columns: ColumnsType<LeaderBoardData & { update: (data: LeaderBoardData[])
 ];
 
 function App() {
+  const [visible, setVisible] = useState(true);
   const [api, setApi] = useState<string>();
   const [confirmed, setConfirmed] = useState(false);
   const { data: leaderBoard, mutate } = useSWR(confirmed ? 'leaderboard' : null, getLeaderBoard);
-  useEffect(() => {
-    const modal = Modal.confirm({
-      afterClose: () => {
-        message.info(`当前 API: ${ApiURL}`);
-        setConfirmed(true);
-      },
-      content: (
+  const [submitForm] = Form.useForm();
+
+  return (
+    <div>
+      <Modal
+        title="设置API地址"
+        onOk={() => {
+          api && setApiURL(api);
+          message.info(`当前 API: ${ApiURL}`);
+          setConfirmed(true);
+          setVisible(false);
+        }}
+        visible={visible}
+      >
         <Form>
           <Form.Item label="API 地址">
             <Input placeholder={ApiURL} value={api} onChange={e => setApi(e.target.value)} />
           </Form.Item>
         </Form>
-      ),
-      title: '设置API地址',
-      onOk: () => {
-        api && setApiURL(api);
-      },
-    });
-    return modal.destroy;
-  }, []);
-  const [submitForm] = Form.useForm();
-
-  return (
-    <div>
+      </Modal>
       <header className="header-container">
         <p className="web-title">SAST 2022 PyTorch Homework Leaderboard</p>
       </header>
