@@ -132,7 +132,6 @@ function App() {
     return modal.destroy;
   }, []);
   const [submitForm] = Form.useForm();
-  console.log(submitForm);
 
   return (
     <div>
@@ -144,6 +143,7 @@ function App() {
           icon={<UploadOutlined />}
           onClick={() => {
             Modal.info({
+              afterClose: () => submitForm.resetFields(),
               content: (
                 <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} form={submitForm}>
                   <Form.Item name="user" label="学号" required>
